@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Prepare the next feature unit on top of the design-system foundation.
+- Build and validate the editor chrome foundation (`02-editor`).
 
 ## Completed
 
@@ -18,6 +18,12 @@ Update this file whenever the current phase, active feature, or implementation s
   - `lucide-react` installed,
   - reusable `cn()` helper available in `lib/utils.ts`,
   - dark theme tokens aligned for component usage.
+- Feature spec `02-editor` base chrome completed:
+  - created `components/editor/editor-navbar.tsx` with fixed top bar and sidebar toggle icons (`PanelLeftOpen` / `PanelLeftClose`),
+  - created `components/editor/project-sidebar.tsx` as floating, slide-in left sidebar with `Tabs` (`My Projects`, `Shared`) and empty states,
+  - added full-width `New Project` action at sidebar bottom with `Plus` icon,
+  - created reusable dialog scaffold `components/editor/editor-dialog-pattern.tsx` with title, description, and footer actions,
+  - wired `app/page.tsx` to use the editor navbar and project sidebar shell state.
 
 ## In Progress
 
@@ -25,7 +31,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Next Up
 
-- Start implementing feature spec `02-*` (to be defined).
+- Continue `02-editor` by adding real project data wiring and interaction flows on top of the shell components.
 
 ## Open Questions
 

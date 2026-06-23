@@ -10,6 +10,12 @@ interface EditorNavbarProps {
   onSidebarToggle: () => void
 }
 
+/**
+ * Renders a navigation bar with a sidebar toggle button and user account menu.
+ *
+ * @param isSidebarOpen - Indicates whether the sidebar is currently open.
+ * @param onSidebarToggle - Callback invoked when the sidebar toggle button is clicked.
+ */
 export function EditorNavbar({
   isSidebarOpen,
   onSidebarToggle,

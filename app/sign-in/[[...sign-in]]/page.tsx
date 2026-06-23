@@ -3,6 +3,9 @@ import { FileText, Share2, Sparkles } from "lucide-react"
 
 const signUpPath = process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ?? "/sign-up"
 
+/**
+ * Renders the application's sign-in page with a marketing panel and authentication form.
+ */
 export default function SignInPage() {
   return (
     <main className="min-h-screen bg-base text-copy-primary">

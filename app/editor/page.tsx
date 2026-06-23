@@ -5,6 +5,9 @@ import { useState } from "react"
 import { EditorNavbar } from "@/components/editor/editor-navbar"
 import { ProjectSidebar } from "@/components/editor/project-sidebar"
 
+/**
+ * Renders the main editor page with a collapsible sidebar and navigation bar.
+ */
 export default function EditorPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 

@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   description: "Ghost AI collaborative system design workspace",
 };
 
+/**
+ * Renders the root HTML document with Geist fonts and Clerk authentication provider.
+ *
+ * @returns The root HTML element with Geist fonts applied and Clerk provider wrapping the application content.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

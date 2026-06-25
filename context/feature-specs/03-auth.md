@@ -50,4 +50,4 @@ install: @clerk/ui.
 - all routes are protected except public auth paths
 - auth pages use CSS variables with no hardcoded colors
 - `ClerkProvider` wraps the root layout
-- `npm run build` passes
+- `bun run build` passes

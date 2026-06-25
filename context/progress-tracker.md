@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Kick off Prisma setup for editor persistence implementation.
+- Continue editor persistence by adding API-backed project CRUD on top of Prisma foundation.
 
 ## Completed
 
@@ -40,16 +40,25 @@ Update this file whenever the current phase, active feature, or implementation s
   - wired owner-only sidebar actions to open rename and delete dialogs,
   - added mobile sidebar backdrop scrim with outside-tap close behavior,
   - kept implementation on mock data only (no API calls or persistence).
+- Feature spec `05-prisma` completed:
+  - switched Prisma config to schema-folder mode (`schema: "prisma"`) to support model splitting under `prisma/models`,
+  - added `ProjectStatus` enum plus `Project` model with Clerk owner mapping, optional metadata fields, and required indexes,
+  - added `ProjectCollaborator` model with cascade delete relation, uniqueness on project/email, and required indexes,
+  - created cached Prisma singleton in `lib/prisma.ts` with runtime branch:
+    - `prisma+postgres://` => `accelerateUrl` + `withAccelerate()`,
+    - non-accelerate URLs => direct `PrismaPg` adapter (`@prisma/adapter-pg`),
+  - ran and applied migration `20260625064621_init_project_models`,
+  - generated Prisma client successfully and verified app build passes.
 
 ## In Progress
 
-- Initializing persistence foundation with Prisma setup planning and tracking.
+- Implementing API-backed project persistence to replace mock editor state.
 
 ## Next Up
 
-- Define Prisma schema models for projects, collaborators, specs, and task runs.
-- Set up Prisma client initialization and environment wiring.
-- Continue `02-editor` by replacing mock project state with API-backed persistence and loading.
+- Add project CRUD API routes with auth + ownership checks.
+- Replace mock project lists in sidebar/dialog flows with database-backed data loading.
+- Introduce initial query/mutation service helpers around `lib/prisma.ts` for editor project operations.
 
 ## Open Questions
 
@@ -64,7 +73,11 @@ Update this file whenever the current phase, active feature, or implementation s
 - Validation checks passed:
   - `04-project-dialogs` wiring implemented against mock state in `/editor`,
   - create/rename/delete dialog transitions are connected from sidebar and editor home.
+- Validation checks passed:
+  - `npx prisma migrate dev --name init_project_models`,
+  - `npx prisma generate`,
+  - `npm run build` (successful build; only non-blocking Next lockfile patch warnings due restricted registry DNS in sandbox).
 - Status update:
   - feature spec `04-project-dialogs` marked complete and ready for handoff.
-  - created branch `feat/prisma-setup` to start persistence foundation work.
+  - feature spec `05-prisma` marked complete and ready for API persistence integration.
 

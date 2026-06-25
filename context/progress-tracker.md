@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Continue `02-editor` by wiring real project data and interaction flows.
+- Start persistence implementation after `04-project-dialogs` completion.
 
 ## Completed
 
@@ -31,14 +31,23 @@ Update this file whenever the current phase, active feature, or implementation s
   - refined auth page UI to match the approved 50/50 split reference layout with darker left panel contrast, feature-list treatment, and updated Clerk card styling,
   - updated `app/page.tsx` to redirect authenticated users to `/editor` and others to `/sign-in`,
   - moved editor shell to `app/editor/page.tsx` and added Clerk `UserButton` to the editor navbar.
+- Feature spec `04-project-dialogs` completed:
+  - added editor home content with heading, description, and centered `New Project` trigger,
+  - created dedicated hook `components/editor/use-project-dialogs.ts` to manage dialog, form, and loading state,
+  - added project dialogs in `components/editor/project-dialogs.tsx` for create, rename, and delete flows,
+  - implemented live slug preview based on typed project name (create and rename),
+  - wired sidebar and home `New Project` buttons to open create dialog,
+  - wired owner-only sidebar actions to open rename and delete dialogs,
+  - added mobile sidebar backdrop scrim with outside-tap close behavior,
+  - kept implementation on mock data only (no API calls or persistence).
 
 ## In Progress
 
-- Preparing next feature implementation scope after completing `03-auth`.
+- Preparing next editor persistence scope after completing `04-project-dialogs`.
 
 ## Next Up
 
-- Continue `02-editor` by adding project persistence, loading, and sidebar interaction wiring.
+- Continue `02-editor` by replacing mock project state with API-backed persistence and loading.
 
 ## Open Questions
 
@@ -51,8 +60,8 @@ Update this file whenever the current phase, active feature, or implementation s
 ## Notes
 
 - Validation checks passed:
-  - `npm run build` passes after auth integration,
-  - lint passes,
-  - TypeScript check passes,
-  - no default light styling in global token setup.
+  - `04-project-dialogs` wiring implemented against mock state in `/editor`,
+  - create/rename/delete dialog transitions are connected from sidebar and editor home.
+- Status update:
+  - feature spec `04-project-dialogs` marked complete and ready for handoff.
 

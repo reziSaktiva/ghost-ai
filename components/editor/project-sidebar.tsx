@@ -1,13 +1,19 @@
 "use client"
 
-import { Plus, X } from "lucide-react"
+import { Pencil, Plus, Trash2, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { MockProject } from "@/components/editor/use-project-dialogs"
+import { cn } from "@/lib/utils"
 
 interface ProjectSidebarProps {
   isOpen: boolean
   onClose: () => void
+  projects: MockProject[]
+  onCreateProject: () => void
+  onRenameProject: (project: MockProject) => void
+  onDeleteProject: (project: MockProject) => void
 }
 
 function EmptyProjectsState({ label }: { label: string }) {
@@ -18,52 +24,148 @@ function EmptyProjectsState({ label }: { label: string }) {
   )
 }
 
-export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
+function ProjectList({
+  projects,
+  onRenameProject,
+  onDeleteProject,
+}: {
+  projects: MockProject[]
+  onRenameProject: (project: MockProject) => void
+  onDeleteProject: (project: MockProject) => void
+}) {
+  if (projects.length === 0) {
+    return <EmptyProjectsState label="No projects yet. Create one to get started." />
+  }
+
   return (
-    <aside
-      className={[
-        "absolute top-16 bottom-4 left-4 z-20 flex w-[320px] flex-col rounded-2xl border border-surface-border bg-elevated/95 p-4 shadow-2xl backdrop-blur-sm transition-transform duration-200 ease-out",
-        isOpen ? "translate-x-0" : "-translate-x-[calc(100%+2rem)]",
-      ].join(" ")}
-      aria-hidden={!isOpen}
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-copy-primary">Projects</h2>
-        <Button
-          variant="ghost"
-          size="icon-sm"
+    <div className="space-y-2">
+      {projects.map((project) => {
+        const isOwned = project.role === "owner"
+
+        return (
+          <div
+            key={project.id}
+            className="flex items-center gap-2 rounded-xl border border-surface-border bg-subtle px-3 py-2"
+          >
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-copy-primary">
+                {project.name}
+              </p>
+              <p className="truncate text-xs text-copy-muted">{project.slug}</p>
+            </div>
+
+            {isOwned ? (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => onRenameProject(project)}
+                  aria-label={`Rename ${project.name}`}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => onDeleteProject(project)}
+                  aria-label={`Delete ${project.name}`}
+                >
+                  <Trash2 className="h-4 w-4 text-state-error" />
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+export function ProjectSidebar({
+  isOpen,
+  onClose,
+  projects,
+  onCreateProject,
+  onRenameProject,
+  onDeleteProject,
+}: ProjectSidebarProps) {
+  const ownedProjects = projects.filter((project) => project.role === "owner")
+  const sharedProjects = projects.filter((project) => project.role === "collaborator")
+
+  return (
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-bg-base/70 backdrop-blur-sm md:hidden"
           onClick={onClose}
-          aria-label="Close project sidebar"
-        >
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
+          aria-hidden="true"
+        />
+      )}
 
-      <Tabs defaultValue="my-projects" className="flex-1">
-        <TabsList className="w-full bg-subtle">
-          <TabsTrigger value="my-projects" className="flex-1">
-            My Projects
-          </TabsTrigger>
-          <TabsTrigger value="shared" className="flex-1">
-            Shared
-          </TabsTrigger>
-        </TabsList>
+      <aside
+        className={cn(
+          "fixed inset-y-3 left-3 top-15 z-50 flex w-72 flex-col rounded-2xl border border-border-subtle bg-bg-surface/95 backdrop-blur-xl transition-transform duration-200",
+          isOpen ? "translate-x-0" : "-translate-x-[calc(100%+1rem)]"
+        )}
+      >
+        <div className="flex h-12 shrink-0 items-center justify-between border-b border-border-default px-4">
+          <h2 className="text-sm font-medium text-text-primary">Projects</h2>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={onClose}
+            aria-label="Close project sidebar"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
 
-        <TabsContent value="my-projects" className="mt-4">
-          <EmptyProjectsState label="No projects yet. Create one to get started." />
-        </TabsContent>
+        <Tabs defaultValue="my-projects" className="flex-1">
+          <TabsList className="w-full bg-subtle">
+            <TabsTrigger value="my-projects" className="flex-1">
+              My Projects
+            </TabsTrigger>
+            <TabsTrigger value="shared" className="flex-1">
+              Shared
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="shared" className="mt-4">
-          <EmptyProjectsState label="No shared projects available yet." />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="my-projects" className="mt-4">
+            <ProjectList
+              projects={ownedProjects}
+              onRenameProject={onRenameProject}
+              onDeleteProject={onDeleteProject}
+            />
+          </TabsContent>
 
-      <div className="mt-4 border-t border-surface-border pt-4">
-        <Button className="w-full">
-          <Plus className="h-4 w-4" />
-          New Project
-        </Button>
-      </div>
-    </aside>
+          <TabsContent value="shared" className="mt-4">
+            {sharedProjects.length === 0 ? (
+              <EmptyProjectsState label="No shared projects available yet." />
+            ) : (
+              <div className="space-y-2">
+                {sharedProjects.map((project) => (
+                  <div
+                    key={project.id}
+                    className="rounded-xl border border-surface-border bg-subtle px-3 py-2"
+                  >
+                    <p className="truncate text-sm font-medium text-copy-primary">
+                      {project.name}
+                    </p>
+                    <p className="truncate text-xs text-copy-muted">{project.slug}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        <div className="mt-4 border-t border-surface-border pt-4">
+          <Button className="w-full" onClick={onCreateProject}>
+            <Plus className="h-4 w-4" />
+            New Project
+          </Button>
+        </div>
+      </aside>
+    </>
   )
 }

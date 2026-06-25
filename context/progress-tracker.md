@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Start persistence implementation after `04-project-dialogs` completion.
+- Kick off Prisma setup for editor persistence implementation.
 
 ## Completed
 
@@ -43,10 +43,12 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## In Progress
 
-- Preparing next editor persistence scope after completing `04-project-dialogs`.
+- Initializing persistence foundation with Prisma setup planning and tracking.
 
 ## Next Up
 
+- Define Prisma schema models for projects, collaborators, specs, and task runs.
+- Set up Prisma client initialization and environment wiring.
 - Continue `02-editor` by replacing mock project state with API-backed persistence and loading.
 
 ## Open Questions
@@ -64,4 +66,5 @@ Update this file whenever the current phase, active feature, or implementation s
   - create/rename/delete dialog transitions are connected from sidebar and editor home.
 - Status update:
   - feature spec `04-project-dialogs` marked complete and ready for handoff.
+  - created branch `feat/prisma-setup` to start persistence foundation work.
 

@@ -62,15 +62,15 @@ Update this file whenever the current phase, active feature, or implementation s
   - introduced `hooks/use-project-actions.ts` for dialog state and project API mutations,
   - wired create flow to generate room-aligned project ID and call `POST /api/projects`,
   - wired rename/delete flows to call `PATCH`/`DELETE`, then refresh or redirect to `/editor` when deleting the active workspace,
-  - updated sidebar and dialogs to consume real project data, show room ID preview on create, and prefill rename/delete context,
-  - added `onOpenProject` callback to `ProjectSidebar` for navigation to individual workspaces.
+  - updated sidebar and dialogs to consume real project data, show room ID preview on create, prefill rename/delete context, and target `/editor/[projectId]` navigation for workspace entry.
 
 ## In Progress
 
-- Complete workspace navigation by implementing the dynamic workspace route (`/editor/[projectId]`) with initial access checks.
+- Workspace route (`/editor/[projectId]`) implementation and access checks.
 
 ## Next Up
 
+- Complete the dynamic workspace route (`/editor/[projectId]`) and initial access checks.
 - Introduce shared error/toast handling for project mutation failures in the editor.
 
 ## Open Questions

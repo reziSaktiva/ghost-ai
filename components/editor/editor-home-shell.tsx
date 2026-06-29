@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 import { EditorNavbar } from "@/components/editor/editor-navbar"
 import { ProjectDialogs } from "@/components/editor/project-dialogs"
@@ -56,6 +57,7 @@ export function EditorHomeShell({
           onClose={() => setIsSidebarOpen(false)}
           ownedProjects={ownedProjects}
           sharedProjects={sharedProjects}
+          onOpenProject={(project) => router.push(`/editor/${project.id}`)}
           onCreateProject={openCreateDialog}
           onOpenProject={handleOpenProject}
           onRenameProject={openRenameDialog}

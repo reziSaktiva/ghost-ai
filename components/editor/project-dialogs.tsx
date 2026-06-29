@@ -31,9 +31,17 @@ export function ProjectDialogs({
   onRenameSubmit,
   onDeleteSubmit,
 }: ProjectDialogsProps) {
+  const handleOpenChange = (open: boolean) => {
+    if (open || isLoading) {
+      return
+    }
+
+    onClose()
+  }
+
   return (
     <>
-      <Dialog open={activeDialog === "create"} onOpenChange={(open) => !open && onClose()}>
+      <Dialog open={activeDialog === "create"} onOpenChange={handleOpenChange}>
         <EditorDialogPattern
           title="Create project"
           description="Name your architecture workspace before you start."
@@ -77,7 +85,7 @@ export function ProjectDialogs({
         </EditorDialogPattern>
       </Dialog>
 
-      <Dialog open={activeDialog === "rename"} onOpenChange={(open) => !open && onClose()}>
+      <Dialog open={activeDialog === "rename"} onOpenChange={handleOpenChange}>
         <EditorDialogPattern
           title="Rename project"
           description={
@@ -124,7 +132,7 @@ export function ProjectDialogs({
         </EditorDialogPattern>
       </Dialog>
 
-      <Dialog open={activeDialog === "delete"} onOpenChange={(open) => !open && onClose()}>
+      <Dialog open={activeDialog === "delete"} onOpenChange={handleOpenChange}>
         <EditorDialogPattern
           title="Delete project"
           description={

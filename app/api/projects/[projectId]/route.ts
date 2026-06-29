@@ -13,6 +13,10 @@ interface RenameProjectBody {
   name?: unknown
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
 function unauthorizedResponse() {
   return NextResponse.json({ error: { message: "Unauthorized" } }, { status: 401 })
 }
@@ -74,11 +78,13 @@ export async function PATCH(request: Request, context: RouteContext) {
   let payload: RenameProjectBody
 
   try {
-    const parsed = await request.json()
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    const body = await request.json()
+
+    if (!isRecord(body)) {
       return badRequestResponse("Invalid JSON body")
     }
-    payload = parsed as RenameProjectBody
+
+    payload = body as RenameProjectBody
   } catch {
     return badRequestResponse("Invalid JSON body")
   }

@@ -12,8 +12,8 @@ interface ProjectSidebarProps {
   onClose: () => void
   ownedProjects: EditorProject[]
   sharedProjects: EditorProject[]
-  onCreateProject: () => void
   onOpenProject: (project: EditorProject) => void
+  onCreateProject: () => void
   onRenameProject: (project: EditorProject) => void
   onDeleteProject: (project: EditorProject) => void
 }
@@ -50,8 +50,9 @@ function ProjectList({
             className="flex items-center gap-2 rounded-xl border border-surface-border bg-subtle px-3 py-2"
           >
             <button
+              type="button"
               onClick={() => onOpenProject(project)}
-              className="min-w-0 flex-1 text-left"
+              className="min-w-0 flex-1 cursor-pointer text-left"
               aria-label={`Open ${project.name}`}
             >
               <p className="truncate text-sm font-medium text-copy-primary">
@@ -64,7 +65,10 @@ function ProjectList({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                onClick={() => onRenameProject(project)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onRenameProject(project)
+                }}
                 aria-label={`Rename ${project.name}`}
               >
                 <Pencil className="h-4 w-4" />
@@ -72,7 +76,10 @@ function ProjectList({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                onClick={() => onDeleteProject(project)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onDeleteProject(project)
+                }}
                 aria-label={`Delete ${project.name}`}
               >
                 <Trash2 className="h-4 w-4 text-state-error" />
@@ -90,8 +97,8 @@ export function ProjectSidebar({
   onClose,
   ownedProjects,
   sharedProjects,
-  onCreateProject,
   onOpenProject,
+  onCreateProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
@@ -150,8 +157,9 @@ export function ProjectSidebar({
                 {sharedProjects.map((project) => (
                   <button
                     key={project.id}
+                    type="button"
                     onClick={() => onOpenProject(project)}
-                    className="w-full rounded-xl border border-surface-border bg-subtle px-3 py-2 text-left"
+                    className="w-full cursor-pointer rounded-xl border border-surface-border bg-subtle px-3 py-2 text-left"
                     aria-label={`Open ${project.name}`}
                   >
                     <p className="truncate text-sm font-medium text-copy-primary">

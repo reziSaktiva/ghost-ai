@@ -1,11 +1,16 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { Prisma } from "@/app/generated/prisma/client"
 
 import { prisma } from "@/lib/prisma"
 
 interface CreateProjectBody {
   id?: unknown
   name?: unknown
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
 }
 
 function unauthorizedResponse() {
@@ -84,11 +89,13 @@ export async function POST(request: Request) {
   let payload: CreateProjectBody = {}
 
   try {
-    const parsed = await request.json()
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    const body = await request.json()
+
+    if (!isRecord(body)) {
       return badRequestResponse("Invalid JSON body")
     }
-    payload = parsed as CreateProjectBody
+
+    payload = body as CreateProjectBody
   } catch {
     return badRequestResponse("Invalid JSON body")
   }
@@ -109,7 +116,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ data: project }, { status: 201 })
   } catch (error) {
-    if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
       return conflictResponse("Project ID already exists")
     }
     return internalServerErrorResponse()

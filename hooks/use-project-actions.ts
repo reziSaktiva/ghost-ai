@@ -14,6 +14,12 @@ interface CreateProjectResponse {
   }
 }
 
+const MAX_PROJECT_ID_LENGTH = 80
+const PROJECT_ID_SUFFIX_LENGTH = 8
+const PROJECT_ID_SEPARATOR_LENGTH = 1
+const MAX_PROJECT_ID_SLUG_LENGTH =
+  MAX_PROJECT_ID_LENGTH - PROJECT_ID_SUFFIX_LENGTH - PROJECT_ID_SEPARATOR_LENGTH
+
 function slugify(value: string) {
   const normalized = value
     .toLowerCase()
@@ -32,6 +38,12 @@ function generateShortSuffix() {
   return Math.random().toString(36).slice(2, 10)
 }
 
+function buildProjectId(projectName: string, suffix: string) {
+  const slug = slugify(projectName).slice(0, MAX_PROJECT_ID_SLUG_LENGTH)
+  const normalizedSlug = slug.replace(/-+$/g, "") || "untitled-project"
+  return `${normalizedSlug}-${suffix}`
+}
+
 export function useProjectActions() {
   const router = useRouter()
   const pathname = usePathname()
@@ -44,17 +56,7 @@ export function useProjectActions() {
 
   const roomIdPreview = useMemo(() => {
     const baseName = projectName.trim().length > 0 ? projectName : "Untitled Project"
-    const slug = slugify(baseName)
-    const fullId = `${slug}-${createSuffix}`
-
-    // API validates 3..80 characters, so truncate if needed
-    if (fullId.length > 80) {
-      const maxSlugLength = 80 - createSuffix.length - 1 // -1 for the hyphen
-      const truncatedSlug = slug.slice(0, maxSlugLength)
-      return `${truncatedSlug}-${createSuffix}`
-    }
-
-    return fullId
+    return buildProjectId(baseName, createSuffix)
   }, [createSuffix, projectName])
 
   const closeDialog = () => {

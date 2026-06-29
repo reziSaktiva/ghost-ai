@@ -44,7 +44,17 @@ export function useProjectActions() {
 
   const roomIdPreview = useMemo(() => {
     const baseName = projectName.trim().length > 0 ? projectName : "Untitled Project"
-    return `${slugify(baseName)}-${createSuffix}`
+    const slug = slugify(baseName)
+    const fullId = `${slug}-${createSuffix}`
+
+    // API validates 3..80 characters, so truncate if needed
+    if (fullId.length > 80) {
+      const maxSlugLength = 80 - createSuffix.length - 1 // -1 for the hyphen
+      const truncatedSlug = slug.slice(0, maxSlugLength)
+      return `${truncatedSlug}-${createSuffix}`
+    }
+
+    return fullId
   }, [createSuffix, projectName])
 
   const closeDialog = () => {

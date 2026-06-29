@@ -74,7 +74,11 @@ export async function PATCH(request: Request, context: RouteContext) {
   let payload: RenameProjectBody
 
   try {
-    payload = (await request.json()) as RenameProjectBody
+    const parsed = await request.json()
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return badRequestResponse("Invalid JSON body")
+    }
+    payload = parsed as RenameProjectBody
   } catch {
     return badRequestResponse("Invalid JSON body")
   }

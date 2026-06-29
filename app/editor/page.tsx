@@ -16,6 +16,7 @@ export default async function EditorPage() {
   const user = await currentUser()
   const collaboratorEmails = user
     ? user.emailAddresses
+        .filter((entry) => entry.verification?.status === "verified")
         .map((entry) => entry.emailAddress.toLowerCase())
         .filter((value) => value.length > 0)
     : []

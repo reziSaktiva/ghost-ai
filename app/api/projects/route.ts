@@ -23,6 +23,10 @@ function internalServerErrorResponse() {
   )
 }
 
+function conflictResponse(message: string) {
+  return NextResponse.json({ error: { message } }, { status: 409 })
+}
+
 function resolveProjectName(payload: CreateProjectBody) {
   if (typeof payload.name !== "string") {
     return "Untitled Project"
@@ -80,7 +84,11 @@ export async function POST(request: Request) {
   let payload: CreateProjectBody = {}
 
   try {
-    payload = (await request.json()) as CreateProjectBody
+    const parsed = await request.json()
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return badRequestResponse("Invalid JSON body")
+    }
+    payload = parsed as CreateProjectBody
   } catch {
     return badRequestResponse("Invalid JSON body")
   }
@@ -100,7 +108,10 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json({ data: project }, { status: 201 })
-  } catch {
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
+      return conflictResponse("Project ID already exists")
+    }
     return internalServerErrorResponse()
   }
 }

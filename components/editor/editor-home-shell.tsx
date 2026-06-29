@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Plus } from "lucide-react"
 
 import { EditorNavbar } from "@/components/editor/editor-navbar"
@@ -19,6 +20,7 @@ export function EditorHomeShell({
   ownedProjects,
   sharedProjects,
 }: EditorHomeShellProps) {
+  const router = useRouter()
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const {
@@ -37,6 +39,10 @@ export function EditorHomeShell({
     submitDelete,
   } = useProjectActions()
 
+  const handleOpenProject = (project: EditorProject) => {
+    router.push(`/editor/${project.id}`)
+  }
+
   return (
     <main className="relative min-h-screen bg-base text-copy-primary">
       <EditorNavbar
@@ -51,6 +57,7 @@ export function EditorHomeShell({
           ownedProjects={ownedProjects}
           sharedProjects={sharedProjects}
           onCreateProject={openCreateDialog}
+          onOpenProject={handleOpenProject}
           onRenameProject={openRenameDialog}
           onDeleteProject={openDeleteDialog}
         />

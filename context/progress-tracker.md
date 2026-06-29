@@ -56,22 +56,21 @@ Update this file whenever the current phase, active feature, or implementation s
   - added `DELETE /api/projects/[projectId]` with owner-only delete enforcement,
   - implemented `401` handling for unauthenticated requests and `403` for non-owner mutations,
   - stabilized Prisma client typing for shared usage in API routes and verified build passes.
-- Feature spec `07-wire-editor-home` completed:
+- Feature spec `07-wire-editor-home` in progress:
   - converted `app/editor/page.tsx` into a server component that loads initial project data before render,
   - added server-side project data helper in `lib/project-data.ts` to fetch owned and shared project lists,
   - introduced `hooks/use-project-actions.ts` for dialog state and project API mutations,
-  - wired create flow to generate room-aligned project ID, call `POST /api/projects`, and navigate to `/editor/[projectId]`,
+  - wired create flow to generate room-aligned project ID and call `POST /api/projects`,
   - wired rename/delete flows to call `PATCH`/`DELETE`, then refresh or redirect to `/editor` when deleting the active workspace,
-  - updated sidebar and dialogs to consume real project data, show room ID preview on create, and prefill rename/delete context.
+  - updated sidebar and dialogs to consume real project data, show room ID preview on create, and prefill rename/delete context,
+  - added `onOpenProject` callback to `ProjectSidebar` for navigation to individual workspaces.
 
 ## In Progress
 
-- None.
+- Complete workspace navigation by implementing the dynamic workspace route (`/editor/[projectId]`) with initial access checks.
 
 ## Next Up
 
-- Add the dynamic workspace route (`/editor/[projectId]`) and initial access checks.
-- Connect sidebar project entries to open their workspace route.
 - Introduce shared error/toast handling for project mutation failures in the editor.
 
 ## Open Questions

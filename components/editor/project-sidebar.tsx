@@ -13,6 +13,7 @@ interface ProjectSidebarProps {
   ownedProjects: EditorProject[]
   sharedProjects: EditorProject[]
   onCreateProject: () => void
+  onOpenProject: (project: EditorProject) => void
   onRenameProject: (project: EditorProject) => void
   onDeleteProject: (project: EditorProject) => void
 }
@@ -27,10 +28,12 @@ function EmptyProjectsState({ label }: { label: string }) {
 
 function ProjectList({
   projects,
+  onOpenProject,
   onRenameProject,
   onDeleteProject,
 }: {
   projects: EditorProject[]
+  onOpenProject: (project: EditorProject) => void
   onRenameProject: (project: EditorProject) => void
   onDeleteProject: (project: EditorProject) => void
 }) {
@@ -46,12 +49,16 @@ function ProjectList({
             key={project.id}
             className="flex items-center gap-2 rounded-xl border border-surface-border bg-subtle px-3 py-2"
           >
-            <div className="min-w-0 flex-1">
+            <button
+              onClick={() => onOpenProject(project)}
+              className="min-w-0 flex-1 text-left"
+              aria-label={`Open ${project.name}`}
+            >
               <p className="truncate text-sm font-medium text-copy-primary">
                 {project.name}
               </p>
               <p className="truncate text-xs text-copy-muted">{project.id}</p>
-            </div>
+            </button>
 
             <div className="flex items-center gap-1">
               <Button
@@ -84,6 +91,7 @@ export function ProjectSidebar({
   ownedProjects,
   sharedProjects,
   onCreateProject,
+  onOpenProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
@@ -128,6 +136,7 @@ export function ProjectSidebar({
           <TabsContent value="my-projects" className="mt-4">
             <ProjectList
               projects={ownedProjects}
+              onOpenProject={onOpenProject}
               onRenameProject={onRenameProject}
               onDeleteProject={onDeleteProject}
             />
@@ -139,15 +148,17 @@ export function ProjectSidebar({
             ) : (
               <div className="space-y-2">
                 {sharedProjects.map((project) => (
-                  <div
+                  <button
                     key={project.id}
-                    className="rounded-xl border border-surface-border bg-subtle px-3 py-2"
+                    onClick={() => onOpenProject(project)}
+                    className="w-full rounded-xl border border-surface-border bg-subtle px-3 py-2 text-left"
+                    aria-label={`Open ${project.name}`}
                   >
                     <p className="truncate text-sm font-medium text-copy-primary">
                       {project.name}
                     </p>
                     <p className="truncate text-xs text-copy-muted">{project.id}</p>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}

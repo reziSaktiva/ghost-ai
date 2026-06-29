@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Continue editor persistence by adding API-backed project CRUD on top of Prisma foundation.
+- Build the project workspace route and wire editor navigation beyond `/editor` home.
 
 ## Completed
 
@@ -49,16 +49,30 @@ Update this file whenever the current phase, active feature, or implementation s
     - non-accelerate URLs => direct `PrismaPg` adapter (`@prisma/adapter-pg`),
   - ran and applied migration `20260625064621_init_project_models`,
   - generated Prisma client successfully and verified app build passes.
+- Feature spec `06-project-apis` completed:
+  - added `GET /api/projects` for authenticated owner project listing,
+  - added `POST /api/projects` with Clerk `ownerId` assignment and default name fallback to `Untitled Project`,
+  - added `PATCH /api/projects/[projectId]` with owner-only rename enforcement,
+  - added `DELETE /api/projects/[projectId]` with owner-only delete enforcement,
+  - implemented `401` handling for unauthenticated requests and `403` for non-owner mutations,
+  - stabilized Prisma client typing for shared usage in API routes and verified build passes.
+- Feature spec `07-wire-editor-home` completed:
+  - converted `app/editor/page.tsx` into a server component that loads initial project data before render,
+  - added server-side project data helper in `lib/project-data.ts` to fetch owned and shared project lists,
+  - introduced `hooks/use-project-actions.ts` for dialog state and project API mutations,
+  - wired create flow to generate room-aligned project ID, call `POST /api/projects`, and navigate to `/editor/[projectId]`,
+  - wired rename/delete flows to call `PATCH`/`DELETE`, then refresh or redirect to `/editor` when deleting the active workspace,
+  - updated sidebar and dialogs to consume real project data, show room ID preview on create, and prefill rename/delete context.
 
 ## In Progress
 
-- Implementing API-backed project persistence to replace mock editor state.
+- None.
 
 ## Next Up
 
-- Add project CRUD API routes with auth + ownership checks.
-- Replace mock project lists in sidebar/dialog flows with database-backed data loading.
-- Introduce initial query/mutation service helpers around `lib/prisma.ts` for editor project operations.
+- Add the dynamic workspace route (`/editor/[projectId]`) and initial access checks.
+- Connect sidebar project entries to open their workspace route.
+- Introduce shared error/toast handling for project mutation failures in the editor.
 
 ## Open Questions
 
@@ -77,6 +91,10 @@ Update this file whenever the current phase, active feature, or implementation s
   - `npx prisma migrate dev --name init_project_models`,
   - `npx prisma generate`,
   - `npm run build` (successful build; only non-blocking Next lockfile patch warnings due restricted registry DNS in sandbox).
+- Validation checks passed:
+  - `bun run build` (includes new routes: `/api/projects` and `/api/projects/[projectId]`).
+- Validation checks passed:
+  - `bun run build` (editor home server fetch + project action wiring).
 - Status update:
   - feature spec `04-project-dialogs` marked complete and ready for handoff.
   - feature spec `05-prisma` marked complete and ready for API persistence integration.

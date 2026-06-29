@@ -4,16 +4,18 @@ import { Pencil, Plus, Trash2, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { MockProject } from "@/components/editor/use-project-dialogs"
 import { cn } from "@/lib/utils"
+import type { EditorProject } from "@/types/project"
 
 interface ProjectSidebarProps {
   isOpen: boolean
   onClose: () => void
-  projects: MockProject[]
+  ownedProjects: EditorProject[]
+  sharedProjects: EditorProject[]
+  onOpenProject: (project: EditorProject) => void
   onCreateProject: () => void
-  onRenameProject: (project: MockProject) => void
-  onDeleteProject: (project: MockProject) => void
+  onRenameProject: (project: EditorProject) => void
+  onDeleteProject: (project: EditorProject) => void
 }
 
 function EmptyProjectsState({ label }: { label: string }) {
@@ -26,12 +28,14 @@ function EmptyProjectsState({ label }: { label: string }) {
 
 function ProjectList({
   projects,
+  onOpenProject,
   onRenameProject,
   onDeleteProject,
 }: {
-  projects: MockProject[]
-  onRenameProject: (project: MockProject) => void
-  onDeleteProject: (project: MockProject) => void
+  projects: EditorProject[]
+  onOpenProject: (project: EditorProject) => void
+  onRenameProject: (project: EditorProject) => void
+  onDeleteProject: (project: EditorProject) => void
 }) {
   if (projects.length === 0) {
     return <EmptyProjectsState label="No projects yet. Create one to get started." />
@@ -40,40 +44,47 @@ function ProjectList({
   return (
     <div className="space-y-2">
       {projects.map((project) => {
-        const isOwned = project.role === "owner"
-
         return (
           <div
             key={project.id}
             className="flex items-center gap-2 rounded-xl border border-surface-border bg-subtle px-3 py-2"
           >
-            <div className="min-w-0 flex-1">
+            <button
+              type="button"
+              onClick={() => onOpenProject(project)}
+              className="min-w-0 flex-1 cursor-pointer text-left"
+              aria-label={`Open ${project.name}`}
+            >
               <p className="truncate text-sm font-medium text-copy-primary">
                 {project.name}
               </p>
-              <p className="truncate text-xs text-copy-muted">{project.slug}</p>
-            </div>
+              <p className="truncate text-xs text-copy-muted">{project.id}</p>
+            </button>
 
-            {isOwned ? (
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => onRenameProject(project)}
-                  aria-label={`Rename ${project.name}`}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => onDeleteProject(project)}
-                  aria-label={`Delete ${project.name}`}
-                >
-                  <Trash2 className="h-4 w-4 text-state-error" />
-                </Button>
-              </div>
-            ) : null}
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onRenameProject(project)
+                }}
+                aria-label={`Rename ${project.name}`}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onDeleteProject(project)
+                }}
+                aria-label={`Delete ${project.name}`}
+              >
+                <Trash2 className="h-4 w-4 text-state-error" />
+              </Button>
+            </div>
           </div>
         )
       })}
@@ -84,14 +95,13 @@ function ProjectList({
 export function ProjectSidebar({
   isOpen,
   onClose,
-  projects,
+  ownedProjects,
+  sharedProjects,
+  onOpenProject,
   onCreateProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
-  const ownedProjects = projects.filter((project) => project.role === "owner")
-  const sharedProjects = projects.filter((project) => project.role === "collaborator")
-
   return (
     <>
       {isOpen && (
@@ -133,6 +143,7 @@ export function ProjectSidebar({
           <TabsContent value="my-projects" className="mt-4">
             <ProjectList
               projects={ownedProjects}
+              onOpenProject={onOpenProject}
               onRenameProject={onRenameProject}
               onDeleteProject={onDeleteProject}
             />
@@ -144,15 +155,18 @@ export function ProjectSidebar({
             ) : (
               <div className="space-y-2">
                 {sharedProjects.map((project) => (
-                  <div
+                  <button
                     key={project.id}
-                    className="rounded-xl border border-surface-border bg-subtle px-3 py-2"
+                    type="button"
+                    onClick={() => onOpenProject(project)}
+                    className="w-full cursor-pointer rounded-xl border border-surface-border bg-subtle px-3 py-2 text-left"
+                    aria-label={`Open ${project.name}`}
                   >
                     <p className="truncate text-sm font-medium text-copy-primary">
                       {project.name}
                     </p>
-                    <p className="truncate text-xs text-copy-muted">{project.slug}</p>
-                  </div>
+                    <p className="truncate text-xs text-copy-muted">{project.id}</p>
+                  </button>
                 ))}
               </div>
             )}
